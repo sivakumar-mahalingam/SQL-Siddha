@@ -24,3 +24,10 @@ sql-siddha lint path/to/query.sql
 ```
 
 Both commands support a ``--dialect`` option which defaults to ``ansi``.
+
+The formatter also accepts ``--keyword-case`` and ``--identifier-case`` flags to
+control the casing of SQL keywords and non-keyword identifiers respectively:
+
+```bash
+sql-siddha format path/to/query.sql --keyword-case lower --identifier-case upper
+```
