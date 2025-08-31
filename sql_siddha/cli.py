@@ -16,7 +16,8 @@ def _read_input(path: Optional[str]) -> str:
         try:
             return Path(path).read_text()
         except FileNotFoundError:
-            raise FileNotFoundError(f"File not found: {path}")
+            print(f"File not found: {path}", file=sys.stderr)
+            raise SystemExit(1)
     return ""
 
 
@@ -36,21 +37,15 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.command == "format":
-        try:
-            sql = _read_input(args.path)
-        except FileNotFoundError as exc:
-            print(exc, file=sys.stderr)
-            return 1
+        sql = _read_input(args.path)
         formatted = format_sql(sql, dialect=args.dialect)
         output_path = args.output or args.path
-        Path(output_path).write_text(formatted + ("\n" if not formatted.endswith("\n") else ""))
+        Path(output_path).write_text(
+            formatted + ("\n" if not formatted.endswith("\n") else "")
+        )
         return 0
     else:  # lint
-        try:
-            sql = _read_input(args.path)
-        except FileNotFoundError as exc:
-            print(exc, file=sys.stderr)
-            return 1
+        sql = _read_input(args.path)
         messages = lint_sql(sql, dialect=args.dialect)
         for msg in messages:
             print(msg)
