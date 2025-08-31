@@ -27,12 +27,12 @@ def main(argv: list[str] | None = None) -> int:
 
     p_format = sub.add_parser("format", help="Format SQL")
     p_format.add_argument("path", help="Path to SQL file")
-    p_format.add_argument("--dialect", default="ansi", help="SQL dialect", choices=["ansi"])
+    p_format.add_argument("--dialect", default="ansi", help="SQL dialect")
     p_format.add_argument("-o", "--output", help="Output file; default overwrites input")
 
     p_lint = sub.add_parser("lint", help="Lint SQL")
     p_lint.add_argument("path", help="Path to SQL file")
-    p_lint.add_argument("--dialect", default="ansi", help="SQL dialect", choices=["ansi"])
+    p_lint.add_argument("--dialect", default="ansi", help="SQL dialect")
 
     args = parser.parse_args(argv)
 
