@@ -1,6 +1,7 @@
 # SQL Siddha
 
 SQL Siddha is a minimal SQL linter and formatter. It currently supports only the ANSI SQL dialect; other dialects can be added later.
+Both the linter and formatter can process files containing multiple SQL statements.
 
 ## Installation
 
