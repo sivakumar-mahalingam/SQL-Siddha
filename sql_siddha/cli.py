@@ -29,6 +29,18 @@ def main(argv: list[str] | None = None) -> int:
     p_format.add_argument("path", help="Path to SQL file")
     p_format.add_argument("--dialect", default="ansi", help="SQL dialect")
     p_format.add_argument("-o", "--output", help="Output file; default overwrites input")
+    p_format.add_argument(
+        "--keyword-case",
+        choices=["upper", "lower"],
+        default="upper",
+        help="Case for SQL keywords",
+    )
+    p_format.add_argument(
+        "--identifier-case",
+        choices=["upper", "lower"],
+        default=None,
+        help="Case for non-keyword identifiers",
+    )
 
     p_lint = sub.add_parser("lint", help="Lint SQL")
     p_lint.add_argument("path", help="Path to SQL file")
@@ -38,7 +50,12 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "format":
         sql = _read_input(args.path)
-        formatted = format_sql(sql, dialect=args.dialect)
+        formatted = format_sql(
+            sql,
+            dialect=args.dialect,
+            keyword_case=args.keyword_case,
+            identifier_case=args.identifier_case,
+        )
         output_path = args.output or args.path
         Path(output_path).write_text(
             formatted + ("\n" if not formatted.endswith("\n") else "")

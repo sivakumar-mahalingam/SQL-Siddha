@@ -13,6 +13,25 @@ def test_cli_format(tmp_path, capsys):
     assert captured.err == ""
 
 
+def test_cli_format_case_options(tmp_path):
+    path = tmp_path / "query.sql"
+    path.write_text("select id from users")
+    assert (
+        main(
+            [
+                "format",
+                str(path),
+                "--keyword-case",
+                "lower",
+                "--identifier-case",
+                "upper",
+            ]
+        )
+        == 0
+    )
+    assert path.read_text().strip() == "select ID\nfrom USERS;"
+
+
 def test_cli_lint_success(tmp_path, capsys):
     path = tmp_path / "query.sql"
     path.write_text("SELECT * FROM users;")
@@ -87,4 +106,3 @@ def test_cli_invalid_dialect_lint(tmp_path):
     path.write_text("select * from users")
     with pytest.raises(NotImplementedError):
         main(["lint", str(path), "--dialect", "invalid"])
-
