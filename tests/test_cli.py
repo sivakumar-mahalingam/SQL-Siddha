@@ -42,7 +42,13 @@ def test_cli_lint_multiple_statements(tmp_path):
     assert "Keyword 'select' should be uppercase" in stdout
 
 
-def test_cli_missing_file():
+def test_cli_lint_missing_file():
     result = run_cli("lint", "missing.sql")
+    assert result.returncode == 1
+    assert "File not found" in result.stderr
+
+
+def test_cli_format_missing_file():
+    result = run_cli("format", "missing.sql")
     assert result.returncode == 1
     assert "File not found" in result.stderr
