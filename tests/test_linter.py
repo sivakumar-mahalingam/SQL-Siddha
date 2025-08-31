@@ -19,6 +19,26 @@ from sql_siddha.linter import lint_sql
                 "Keyword 'from' should be uppercase",
             ],
         ),
+        (
+            "merge into target t using source s on t.id = s.id when matched then update set col = s.col when not matched then insert (id, col) values (s.id, s.col)",
+            [
+                "Statement should end with a semicolon",
+                "Keyword 'merge' should be uppercase",
+                "Keyword 'into' should be uppercase",
+                "Keyword 'using' should be uppercase",
+                "Keyword 'source' should be uppercase",
+                "Keyword 'on' should be uppercase",
+                "Keyword 'when' should be uppercase",
+                "Keyword 'then' should be uppercase",
+                "Keyword 'update' should be uppercase",
+                "Keyword 'set' should be uppercase",
+                "Keyword 'when' should be uppercase",
+                "Keyword 'not' should be uppercase",
+                "Keyword 'then' should be uppercase",
+                "Keyword 'insert' should be uppercase",
+                "Keyword 'values' should be uppercase",
+            ],
+        ),
     ],
 )
 def test_lint_errors(sql, expected):
