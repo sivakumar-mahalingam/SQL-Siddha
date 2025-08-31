@@ -26,25 +26,35 @@ def lint_sql(sql: str, dialect: Literal["ansi"] = "ansi") -> List[str]:
 
     messages: List[str] = []
 
-    statements = [s for s in sqlparse.split(sql) if s.strip()]
-    if not statements:
-        return ["No SQL statement found"]
+    # Iterate over each individual statement so that errors are reported
+    # separately for every statement in the input SQL string.
+    found_statement = False
+    for raw_stmt in sqlparse.split(sql):
+        stmt = raw_stmt.strip()
+        if not stmt:
+            continue
+        found_statement = True
 
-    for stmt in statements:
+        stmt_messages: List[str] = []
+
         parsed = sqlparse.parse(stmt)
         if not parsed:
-            messages.append("No SQL statement found")
-            continue
-        statement = parsed[0]
+            stmt_messages.append("No SQL statement found")
+        else:
+            statement = parsed[0]
 
-        # Check that the final non-whitespace token is a semicolon
-        meaningful_tokens = [t for t in statement.tokens if not t.is_whitespace]
-        if meaningful_tokens and meaningful_tokens[-1].value != ";":
-            messages.append("Statement should end with a semicolon")
+            # Check that the final non-whitespace token is a semicolon
+            meaningful_tokens = [t for t in statement.tokens if not t.is_whitespace]
+            if meaningful_tokens and meaningful_tokens[-1].value != ";":
+                stmt_messages.append("Statement should end with a semicolon")
 
-        # Check that keywords are uppercase
-        for token in statement.flatten():
-            if token.ttype in T.Keyword and token.value != token.value.upper():
-                messages.append(f"Keyword '{token.value}' should be uppercase")
+            # Check that keywords are uppercase
+            for token in statement.flatten():
+                if token.ttype in T.Keyword and token.value != token.value.upper():
+                    stmt_messages.append(
+                        f"Keyword '{token.value}' should be uppercase"
+                    )
 
-    return messages
+        messages.extend(stmt_messages)
+
+    return messages if found_statement else ["No SQL statement found"]

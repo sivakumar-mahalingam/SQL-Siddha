@@ -24,9 +24,14 @@ def format_sql(sql: str, dialect: Literal["ansi"] = "ansi") -> str:
     if dialect not in SUPPORTED_DIALECTS:
         raise NotImplementedError(f"Dialect '{dialect}' is not supported yet")
 
-    statements = [s for s in sqlparse.split(sql) if s.strip()]
     formatted_parts = []
-    for stmt in statements:
+
+    # Format each individual statement and preserve order
+    for raw_stmt in sqlparse.split(sql):
+        stmt = raw_stmt.strip()
+        if not stmt:
+            continue
+
         formatted = sqlparse.format(
             stmt,
             keyword_case="upper",
@@ -36,4 +41,5 @@ def format_sql(sql: str, dialect: Literal["ansi"] = "ansi") -> str:
         if not formatted.endswith(";"):
             formatted = formatted.rstrip(";") + ";"
         formatted_parts.append(formatted)
+
     return "\n".join(formatted_parts)
